@@ -50,8 +50,8 @@ if (WITH_RANDOMX)
         src/crypto/defyx/KeccakSpongeWidth1600.c
         src/crypto/defyx/KeccakSpongeWidth1600.h
         src/crypto/defyx/Phases.h
-        src/crypto/defyx/sha256.c
-        src/crypto/defyx/sha256.h
+        src/crypto/defyx/sha256_Y.c
+        src/crypto/defyx/sha256_Y.h
         src/crypto/defyx/sysendian.h
         src/crypto/defyx/yescrypt.h
     )

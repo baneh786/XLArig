@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #include "yescrypt.h"
 #include "KangarooTwelve.h"
-} 
+}
 
 #define YESCRYPT_FLAGS YESCRYPT_RW
 #define YESCRYPT_BASE_N 2048
@@ -64,18 +64,23 @@ RandomX_ConfigurationScala::RandomX_ConfigurationScala()
 
 RandomX_ConfigurationScala RandomX_ScalaConfig;
 
-int sipesh(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, unsigned int t_cost, unsigned int m_cost)
+//int sipesh(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, unsigned int t_cost, unsigned int m_cost)
+int sipesh(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, uint32_t t_cost, unsigned int m_cost)
 {
 	yescrypt_local_t local;
 	int retval;
 
 	if (yescrypt_init_local(&local))
 		return -1;
-	retval = yescrypt_kdf(NULL, &local, (const uint8_t*)in, inlen, (const uint8_t*)salt, saltlen,
-	    (uint64_t)YESCRYPT_BASE_N << m_cost, YESCRYPT_R, YESCRYPT_P,
-	    t_cost, 0, YESCRYPT_FLAGS, (uint8_t*)out, outlen);
-	if (yescrypt_free_local(&local))
-		return -1;
+//	retval = yescrypt_kdf(NULL, &local, (const uint8_t*)in, inlen, (const uint8_t*)salt, saltlen,
+//	    (uint64_t)YESCRYPT_BASE_N << m_cost, YESCRYPT_R, YESCRYPT_P,
+//	    t_cost, 0, flags, (uint8_t*)out, outlen);
+       retval = yescrypt_kdf(NULL, &local, (const uint8_t*)in, inlen,
+		(const uint8_t*)salt, saltlen, (uint64_t)YESCRYPT_BASE_N << m_cost,
+		YESCRYPT_R, YESCRYPT_P, t_cost, YESCRYPT_FLAGS, (uint8_t*)out, outlen);
+
+	if (yescrypt_free_local(&local)){
+		return -1;}
 	return retval;
 }
 
