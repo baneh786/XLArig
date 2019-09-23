@@ -28,12 +28,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "defyx.h"
+#include "crypto/randomx/common.hpp"
 #include "crypto/randomx/blake2/blake2.h"
 #include "crypto/randomx/vm_interpreted.hpp"
 #include "crypto/randomx/vm_interpreted_light.hpp"
 #include "crypto/randomx/vm_compiled.hpp"
 #include "crypto/randomx/vm_compiled_light.hpp"
+
+#if defined(_M_X64) || defined(__x86_64__)
 #include "crypto/randomx/jit_compiler_x86_static.hpp"
+#elif defined(XMRIG_ARM)
+#include "crypto/randomx/jit_compiler_a64_static.hpp"
+#endif
+#define JIT_HANDLE(x, prev) randomx::JitCompilerX86::engine[k] = &randomx::JitCompilerX86::h_##x
 
 #include <cassert>
 
@@ -64,6 +71,14 @@ RandomX_ConfigurationScala::RandomX_ConfigurationScala()
 
 RandomX_ConfigurationScala RandomX_ScalaConfig;
 
+#ifdef defined(XMRIG_ARM)
+	Log2_ScratchpadL1 = Log2(ScratchpadL1_Size);
+	Log2_ScratchpadL2 = Log2(ScratchpadL2_Size);
+	Log2_ScratchpadL3 = Log2(ScratchpadL3_Size);
+	Log2_DatasetBaseSize = Log2(DatasetBaseSize);
+	Log2_CacheSize = Log2((ArgonMemory * randomx::ArgonBlockSize) / randomx::CacheLineSize)
+#endif
+
 int sipesh(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, unsigned int t_cost, unsigned int m_cost)
 {
 	yescrypt_local_t local;
@@ -86,6 +101,8 @@ int k12(const void *data, size_t length, void *hash)
   return kDo;
 }
 
+	constexpr int CEIL_NULL = 0;
+	int k = 0;
 
 extern "C" {
 

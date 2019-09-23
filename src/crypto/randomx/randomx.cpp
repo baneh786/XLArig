@@ -178,6 +178,14 @@ void RandomX_ConfigurationBase::Apply()
 
 	ConditionMask_Calculated = (1 << JumpBits) - 1;
 
+#ifdef XMRIG_ARM
+	uint32_t Log2_ScratchpadL1;
+	uint32_t Log2_ScratchpadL2;
+	uint32_t Log2_ScratchpadL3;
+	uint32_t Log2_DatasetBaseSize;
+	uint32_t Log2_CacheSize;
+#endif
+
 	constexpr int CEIL_NULL = 0;
 	int k = 0;
 

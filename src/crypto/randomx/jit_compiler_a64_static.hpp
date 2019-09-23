@@ -1,8 +1,7 @@
 /*
 Copyright (c) 2018-2019, tevador <tevador@gmail.com>
-
+Copyright (c) 2019, SChernykh    <https://github.com/SChernykh>
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 	* Redistributions of source code must retain the above copyright
@@ -13,7 +12,6 @@ modification, are permitted provided that the following conditions are met:
 	* Neither the name of the copyright holder nor the
 	  names of its contributors may be used to endorse or promote products
 	  derived from this software without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,36 +24,25 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "crypto/randomx/vm_compiled.hpp"
-#include "crypto/randomx/common.hpp"
+#pragma once
 
-namespace randomx {
-
-	static_assert(sizeof(MemoryRegisters) == 2 * sizeof(addr_t) + sizeof(uintptr_t), "Invalid alignment of struct randomx::MemoryRegisters");
-	static_assert(sizeof(RegisterFile) == 256, "Invalid alignment of struct randomx::RegisterFile");
-
-	template<bool softAes>
-	void CompiledVm<softAes>::setDataset(randomx_dataset* dataset) {
-		datasetPtr = dataset;
-	}
-
-	template<bool softAes>
-	void CompiledVm<softAes>::run(void* seed) {
-		VmBase<softAes>::generateProgram(seed);
-		randomx_vm::initialize();
-		compiler.generateProgram(program, config);
-		mem.memory = datasetPtr->memory + datasetOffset;
-		execute();
-	}
-
-	template<bool softAes>
-	void CompiledVm<softAes>::execute() {
-#ifdef XMRIG_ARM
-		memcpy(reg.f, config.eMask, sizeof(config.eMask));
-#endif
-		compiler.getProgramFunc()(reg, mem, scratchpad, RandomX_CurrentConfig.ProgramIterations);
-	}
-
-	template class CompiledVm<false>;
-	template class CompiledVm<true>;
+extern "C" {
+	void randomx_program_aarch64(void* reg, void* mem, void* scratchpad, uint64_t iterations);
+	void randomx_program_aarch64_main_loop();
+	void randomx_program_aarch64_vm_instructions();
+	void randomx_program_aarch64_imul_rcp_literals_end();
+	void randomx_program_aarch64_vm_instructions_end();
+	void randomx_program_aarch64_cacheline_align_mask1();
+	void randomx_program_aarch64_cacheline_align_mask2();
+	void randomx_program_aarch64_update_spMix1();
+	void randomx_program_aarch64_vm_instructions_end_light();
+	void randomx_program_aarch64_light_cacheline_align_mask();
+	void randomx_program_aarch64_light_dataset_offset();
+	void randomx_init_dataset_aarch64();
+	void randomx_init_dataset_aarch64_end();
+	void randomx_calc_dataset_item_aarch64();
+	void randomx_calc_dataset_item_aarch64_prefetch();
+	void randomx_calc_dataset_item_aarch64_mix();
+	void randomx_calc_dataset_item_aarch64_store_result();
+	void randomx_calc_dataset_item_aarch64_end();
 }
