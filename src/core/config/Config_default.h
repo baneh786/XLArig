@@ -57,17 +57,27 @@ R"===(
         "huge-pages": true,
         "hw-aes": null,
         "priority": null,
+        "max-threads-hint": 100,
         "asm": true,
         "argon2-impl": null,
         "cn/0": false,
         "cn-lite/0": false
     },
-    "donate-level": 0,
+    "opencl": {
+        "enabled": false,
+        "cache": true,
+        "loader": null,
+        "platform": "AMD",
+        "cn/0": false,
+        "cn-lite/0": false
+    },
+    "donate-level": 5,
     "donate-over-proxy": 1,
     "log-file": null,
     "pools": [
         {
             "algo": null,
+            "coin": null,
             "url": "donate.v2.xlarig.com:3333",
             "user": "YOUR_WALLET_ADDRESS",
             "pass": "x",
